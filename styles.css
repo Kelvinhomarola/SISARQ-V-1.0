@@ -1,0 +1,63 @@
+﻿ body {
+            margin: 0;
+            font-family: var(--bs-font-sans-serif);
+            font-size: 1rem;
+            font-weight: 400;
+            line-height: 1.5;
+            color: #212529;
+            background-color: #55749b;
+        }
+
+ table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        table, th, td {
+            border: 1px solid black;
+        }
+
+        th, td {
+            padding: 8px;
+            text-align: center;
+        }
+
+        .container {
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #ffffff; /* Fundo branco para o conteúdo */
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Sombra para efeito de profundidade */
+        }
+
+        .page-background {
+            background-color: #007bff; /* Azul para as laterais */
+            padding: 20px; /* Espaçamento ao redor do container */
+        }
+
+        .nav-tabs .nav-link {
+            border-radius: 0;
+            border: none; /* Remove a borda */
+        }
+
+        .nav-tabs .nav-link.active {
+            background-color: #0056b3; /* Azul mais escuro para a aba ativa */
+            color: white; /* Texto branco na aba ativa */
+        }
+
+        .nav-tabs .nav-link:hover {
+            background-color: #0056b3; /* Azul mais escuro ao passar o mouse */
+            color: white; /* Texto branco ao passar o mouse */
+        }
+
+        .alert {
+            margin-top: 20px;
+        }
+
+        h3 {
+            color: black; /* Título azul */
+        }
+
+        .form-group {
+            margin-bottom: 15px; /* Espaçamento entre os campos do formulário */
+        }
