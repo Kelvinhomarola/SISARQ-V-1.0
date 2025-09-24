@@ -1,0 +1,50 @@
+ body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            /* Definindo a imagem de fundo */
+            background-image: url('../img/sisarq.png'); /* Substitua pelo caminho correto */
+            background-size: cover;
+            background-position: center;
+            /* Aplicando o efeito de desfoque */
+            backdrop-filter: blur(10px);
+        }
+
+        .container {
+            background-color: rgba(255, 255, 255, 0.9); /* Fundo branco semitransparente para destacar o conteúdo */
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .custom-radio {
+            font-size: 18px;
+        }
+
+        #start-button {
+            padding: 15px 40px;
+            font-size: 20px;
+        }
+
+         /* Estilo personalizado para os botões */
+        .btn-sobre {
+            background-color: #3498db; /* Azul */
+            color: white;
+        }
+
+        .btn-instrucoes {
+            background-color: #f1c40f; /* Amarelo */
+            color: white;
+        }
+
+        .btn-sobre:hover, .btn-instrucoes:hover {
+            opacity: 0.8;
+        }
