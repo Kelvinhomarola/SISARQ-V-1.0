@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SISARQ VER-1.0</title>
+    <!-- Chama o CSS do Bootstrap -->
+    <link rel="stylesheet" href="../public/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="../css/styles_inicio.css">
+    <script language="javascript" src="../js/script_selecao_inicio.js"></script>
+
+</head>
+<body>
+
+   <div class="container">
+        <h1>SISARQ</h1>
+
+        <!-- Opções de L < 24 e L > 24 -->
+        <div class="form-group">
+            <label for="selecione-opcao">Selecione uma opção:</label>
+            <div class="custom-control custom-radio">
+                <input type="radio" id="opcao1" name="opcao" class="custom-control-input" onclick="habilitarBotao(true)">
+                <label class="custom-control-label" for="opcao1">L < 24</label>
+            </div>
+            <div class="custom-control custom-radio">
+                <input type="radio" id="opcao2" name="opcao" class="custom-control-input" onclick="habilitarBotao(false)">
+                <label class="custom-control-label" for="opcao2">L > 24</label>
+            </div>
+        </div>
+
+        <!-- Botões adicionais: Sobre, Instruções -->
+        <div class="text-center">
+            <button id="start-button" class="btn btn-success btn-lg" onclick="iniciar()" disabled>Iniciar</button>
+            <button class="btn btn-sobre btn-lg" data-toggle="modal" data-target="#sobreModal">Sobre</button>
+            <button class="btn btn-instrucoes btn-lg" onclick="mostrarInstrucoes()">Instruções</button>
+        </div>
+    </div>
+
+    <!-- Modal do Sobre -->
+    <div class="modal fade" id="sobreModal" tabindex="-1" role="dialog" aria-labelledby="sobreModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="sobreModalLabel">Sobre o Sistema</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p><strong>Versão:</strong> SISARQ VER-1.0</p>
+                    <p><strong>Desenvolvedores:</strong></p>
+                    <ul>
+                        <li>FC - NS - Niverson Alves Bordignon</li>
+                        <p>(niverson@marinha.mil.br)</p>
+                        <li>CB-PD Kelven Christian <strong>Rodrigues</strong> Siqueira</li>
+                        <p>(kelven.siqueira@marinha.mil.br)</p>
+                    </ul>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+       
+    </script>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="../public/js/bootstrap.bundle.js"></script> 
+
+</body>
+</html>

@@ -1,0 +1,1061 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+	
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>SisArq Web</title>
+
+	<link rel="stylesheet" href="../public/css/bootstrap.min.css">
+	<link rel="stylesheet" type="text/css" href="../css/styles.css">
+	<link rel="stylesheet" type="text/css" href="../css/multiselect.css">
+	<script language="javascript" src="../js/calculos_navegacao.js"></script>
+	<script language="javascript" src="../js/restringindo_campos.js"></script>
+	<script language="javascript" src="../js/gerandopdf.js"></script>
+	<script language="javascript" src="../js/alt_propulsao.js"></script>
+	<script language="javascript" src="../js/multselect.js"></script>
+	<script language="javascript" src="../js/inserindo_tabela_motoresPDF.js"></script>
+	<script language="javascript" src="../js/botao_nova_arqueacao.js"></script>
+
+
+
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+</head>
+<body>
+
+	<div class="container mt-4">
+		<div id="brasao" class="text-center mb-4">
+			<img src="../img/brasãomod.png" alt="Brasão da Marinha">
+			<h3>MARINHA DO BRASIL</h3>
+			<h3>CAPITANIA FLUVIAL DE SANTARÉM</h3>
+			<hr>
+			<h3>CÁLCULO DA ARQUEAÇÃO DE EMBARCAÇÕES (L < 24 m)</h3>
+		</div>
+
+		<!-- Nav Tabs -->
+		<ul class="nav nav-tabs" id="myTab" role="tablist">
+			<li class="nav-item">
+				<a class="nav-link active" id="caracteristicas-tab" data-bs-toggle="tab" href="#caracteristicas" role="tab" aria-controls="caracteristicas" aria-selected="true">I a III - Características Principais</a>
+			</li>
+			<li class="nav-item">
+				<a class="nav-link disabled" id="passageiros-tab" data-bs-toggle="tab" href="#passageiros" role="tab" aria-controls="passageiros" aria-selected="false">IV - Determinação dos Volumes</a>
+			</li>
+			<li class="nav-item">
+				<a class="nav-link disabled" id="volumes-acima-tab" data-bs-toggle="tab" href="#volumes-acima" role="tab" aria-controls="volumes" aria-selected="false">V - Volumes Acima do Convés</a>
+			</li>
+			<li class="nav-item">
+				<a class="nav-link disabled" id="det-calados-tab" data-bs-toggle="tab" href="#det-calados" role="tab" aria-controls="vol-esp-car" aria-selected="false">VI - Determinação Calados</a>
+			</li>
+			<li class="nav-item">
+				<a class="nav-link disabled" id="volumes-espacos-carga-tab" data-bs-toggle="tab" href="#volumes-espacos-carga" role="tab" aria-controls="vol-esp-car" aria-selected="false">VII - Volumes dos Espaços de Carga</a>
+			</li>
+			<li class="nav-item">
+				<a class="nav-link disabled" id="dados-motores-tab" data-bs-toggle="tab" href="#dados-motores" role="tab" aria-controls="motor-data" aria-selected="false">VIII - Dados dos Motores</a>
+			</li>
+			<li class="nav-item">
+				<a class="nav-link disabled" id="arqueacao-bruta-liquida-tab" data-bs-toggle="tab" href="#arqueacao-bruta-liquida" role="tab" aria-controls="arq-bru-liq" aria-selected="false">IX - Arqueação Bruta e Líquida</a>
+			</li>
+			<li class="nav-item">
+				<a class="nav-link disabled" id="observacoes-tab" data-bs-toggle="tab" href="#observacoes" role="tab" aria-controls="obs" aria-selected="false">Observações</a>
+			</li>
+		</ul>
+
+		<!-- Tab Content -->
+		<div class="tab-content" id="myTabContent">
+			<!-- Características Principais -->
+			<div class="tab-pane fade show active" id="caracteristicas" role="tabpanel" aria-labelledby="caracteristicas-tab">
+				<form>
+					<div class="form-group row mt-3">
+						<div class="col-md-4">
+							<label for="om-responsavel">OM Responsável</label>
+							<input type="text" class="form-control" id="om-responsavel" name="om-responsavel" placeholder="Exemplo: Capitania Fluvial de Santarém">
+						</div>
+						<div class="col-md-4">
+							<label for="nome-da-embarcacao">Nome da Embarcação</label>
+							<input type="text" class="form-control" id="nome-da-embarcacao" name="nome-da-embarcacao">
+						</div>
+						<div class="col-md-4">
+							<label for="nome-do-armador">Nome do Armador</label>
+							<input type="text" class="form-control" id="nome-do-armador" name="nome-do-armador">
+						</div>
+					</div>
+					<div class="form-group row mt-3">
+						<div class="col-md-4">
+							<label for="nome-do-construtor">Nome do Construtor</label>
+							<input type="text" class="form-control" id="nome-do-construtor" name="nome-do-construtor">
+						</div>
+						<div class="col-md-4">
+							<label for="porto-de-inscricao">Porto de Inscrição</label>
+							<input type="text" class="form-control" id="porto-de-inscricao" name="porto-de-inscricao">
+						</div>
+						<div class="col-md-4">
+							<label for="ano-construcao">Ano de Construção</label>
+							<input type="text" class="form-control" id="ano-construcao" name="ano-construcao">
+						</div>
+					</div>
+					<div class="form-group row mt-3">
+						<div class="col-md-4">
+							<label for="numero-inscricao">Número de Inscrição</label>
+							<a tabindex="0" role="button" class="btn btn-link p-0" data-bs-toggle="popover" data-bs-trigger="focus" data-bs-content="Caso a embarcação não for inscrita, deixar em branco" data-bs-placement="top">
+								<small><strong>?</strong></small>
+							</a>
+
+							<input type="text" class="form-control" id="numero-inscricao" name="numero-inscricao" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');" placeholder="Somente números" />
+						</div>
+
+						<div class="col-md-4">
+							<label for="material-do-casco">Material do Casco</label>
+							<select class="form-control" name="material-do-casco" id="material-do-casco" onchange="calcularCoeficienteConvencional()">
+								<option value="selecione-material" value="">Selecione uma Opção</option>
+								<option value="Aço">Aço</option>
+								<option value="Madeira">Madeira</option>
+								<option value="Fibra-de-Vidro">Fibra de Vidro</option>
+								<option value="Aluminio">Alumínio</option>
+								<option value="Concreto">Concreto</option>
+							</select>
+						</div>
+						<div class="col-md-4">
+							<label for="atividade-servico">Atividade ou Serviço</label>
+							<div class="multiselect-container">
+								<div class="multiselect-input" id="atividade-servico">Selecione uma ou mais opções</div>
+								<div class="multiselect-dropdown" id="atividade-servico-dropdown">
+									<div class="multiselect-item">
+										<input type="checkbox" value="Trans.Passageiro"> Passageiros
+									</div>
+									<div class="multiselect-item">
+										<input type="checkbox" value="Trans.Carga"> Carga
+									</div>
+									<div class="multiselect-item">
+										<input type="checkbox" value="Reboque"> Reboque
+									</div>
+									<div class="multiselect-item">
+										<input type="checkbox" value="Empurrador"> Empurrador
+									</div>
+									<div class="multiselect-item">
+										<input type="checkbox" value="Pesca"> Pesca
+									</div>
+									<div class="multiselect-item">
+										<input type="checkbox" value="Esporte/Recreio"> Esporte/Recreio
+									</div>
+									<div class="multiselect-item">
+										<input type="checkbox" value="Dragagem"> Dragagem
+									</div>
+									<div class="multiselect-item">
+										<input type="checkbox" value="Levantamento-Hidrografico"> Levantamento Hidrográfico
+									</div>
+									<div class="multiselect-item">
+										<input type="checkbox" value="Monitoramento-Ambiental"> Monitoramento Ambiental
+									</div>
+									<div class="multiselect-item">
+										<input type="checkbox" value="Perfuracao"> Perfuração
+									</div>
+									<div class="multiselect-item">
+										<input type="checkbox" value="Pesquisa-Cientifica"> Pesquisa Científica
+									</div>
+									<div class="multiselect-item">
+										<input type="checkbox" value="Producao"> Produção
+									</div>
+									<div class="multiselect-item">
+										<input type="checkbox" value="Servico-Publico"> Serviço Público
+									</div>
+									<div class="multiselect-item">
+										<input type="checkbox" value="Apoio-Turismo"> Apoio ao Turismo
+									</div>
+									<div class="multiselect-item">
+										<input type="checkbox" value="Passageiro-Carga"> Passageiros e Carga
+									</div>
+								</div>
+							</div>
+						</div>
+
+
+					</div>
+
+
+					<hr>
+					<div class="form-group">
+						<label for="tipos-de-embarcacoes">Tipos de Embarcações</label>
+						<select class="form-control" name="tipos-de-embarcacoes" id="tipos-de-embarcacoes">
+							<option value="selecione-material" value="">Selecione uma Opção</option>
+							<option value="anfibia">Anfíbia</option>
+							<option value="apoio a manobra">Apoio à Manobra</option>
+							<option value="apoio a rov">Apoio ROV</option>
+							<option value="apoio a mergulho">Apoio ao Mergulho</option>
+							<option value="balsa">Balsa</option>
+							<option value="barcaca1">Barcaça(Batelão ou Alvarenga)</option>
+							<option value="bote">Bote</option>
+							<option value="cabrea">Cábrea</option>
+							<option value="caiaque">Caiaque</option>
+							<option value="canoa">Canoa</option>
+							<option value="hsc carca">Carga de Alta Velocidade(HSC Carga)</option>
+							<option value="carga geral">Carga Geral</option>
+							<option value="carga refrigerada">Carga Refrigerada</option>
+							<option value="carga viva">Carga Viva</option>
+							<option value="chata">Chata</option>
+							<option value="cisterna">Cisterna (FSO)</option>
+							<option value="dique flutuante">Dique Flutuante</option>
+							<option value="draga">Draga</option>
+							<option value="empurrador">Empurrador</option>
+							<option value="escuna">Escuna</option>
+							<option value="estimulador">Estimulador de Poço</option>
+							<option value="flotel">Flotel</option>
+							<option value="flutuante">Flutuante</option>
+							<option value="fsru">FSRU</option>
+							<option value="fpso">FPSO</option>
+							<option value="gaseiro">Gaseiro GNL</option>
+							<option value="graneleiro">Graneleiro</option>
+							<option value="hidroaviao">Hidroavião</option>
+							<option value="hovercraft">Hovercraft</option>
+							<option value="iate">Iate</option>
+							<option value="jangada">Jangada</option>
+							<option value="jetboat">Jet Boat</option>
+							<option value="lancador">Lançador de Linhas(PLV)</option>
+							<option value="lancha">Lancha</option>
+							<option value="multicasco">Multicasco</option>
+							<option value="multiproposito">Multiproposito</option>
+							<option value="ahts">Navio de Manuseio de Ancora (AHTS)</option>
+							<option value="oceanografico">Oceanografico</option>
+							<option value="passageiros">Passageiros</option>
+							<option value="passageiros-carga-geral">Passageiros/Carga Geral</option>
+							<option value="pesqueiro">Pesqueiro</option>
+							<option value="pesquisa">Pesquisa</option>
+							<option value="petroleiro">Petroleiro</option>
+							<option value="plataforma-auto-elevavel">Plataforma Auto-Elevável</option>
+							<option value="plataforma-semi">Plataforma Semi-Submersível</option>
+							<option value="plataforma-tlp">Plataforma TLP (Tension Legs Plataform)</option>
+							<option value="porta-cotentor">Porta-Cotentor</option>
+							<option value="quebra-gelo">Quebra Gelo</option>
+							<option value="químico">Químico</option>
+							<option value="rebocador">Rebocador</option>
+							<option value="rollon-rollof-carga">Roll-On/Roll-Off(Carga)</option>
+							<option value="rollon-rollof-passageiros">Roll-On/Roll-Off Passageiros(Ferry Boat)</option>
+							<option value="saveiro">Saveiro</option>
+							<option value="sonda">Sonda</option>
+							<option value="supridor-supply">Supridor (Supply)</option>
+							<option value="tanque">Tanque (Transporte de Granéis Líquidos)</option>
+							<option value="traineira">Traineira</option>
+							<option value="veleiro">Veleiro</option>
+						</select>
+						<br>
+					</div>
+					<div class="form-group">
+						<label for="tipos-de-navegacao">A)Tipos de Navegação</label>
+						<select class="form-control" name="tipos-de-navegacao" id="tipos-de-navegacao" onchange="atualizarTiposNavegacao()">
+							<option value="selecione-material" value="">Selecione uma Opção</option>
+							<option value="longo-curso">Longo Curso</option>
+							<option value="cabotagem">Cabotagem</option>
+							<option value="apoio-maritimo">Apoio Marítimo</option>
+							<option value="apoio-portuario">Apoio Portuário</option>
+							<option value="interior-area-1">Interior - Área 1</option>
+							<option value="interior-area-2">Interior - Área 2</option>
+						</select>
+						<br>
+					</div>
+					<div class="form-group">
+						<label for="propulsao">B)Tipos de Propulsão</label>
+						<select class="form-control" name="propulsao" id="propulsao">
+							<option value="selecione-material" value="">Selecione uma Opção</option>
+							<option value="com-propulsão">Com Propulsão</option>
+							<option value="sem-propulsão">Sem Propulsão</option>
+						</select>
+						<br>
+					</div>
+					<hr>
+					<div class="row">
+						<div class="col-md-4">
+							<label for="quantidade1">COMPRIMENTO TOTAL (Ct) =</label>
+							<input type="number" id="comprimento-total" name="quantity" class="form-control" oninput="formatarNumero(this)" min="1" max="500" step="0.1">
+						</div>
+						<div class="col-md-4">
+							<label for="quantidade2">COMPRIMENTO DE REGRA (L) =</label>
+							<input type="number" id="comprimento-de-regra" name="quantity" class="form-control" oninput="formatarNumero(this)" min="1" max="500" step="0.1"> 
+						</div>
+						<div class="col-md-4">
+							<label for="quantidade3">COMPRIMENTO ENTRE PERPENDICULARES (Lpp) =</label>
+							<input type="number" id="comprimento-entre-perpendiculares" name="quantity" class="form-control" min="1" max="500" step="0.1"> 
+						</div>
+					</div>
+
+					<div class="row mt-3">
+						<div class="col-md-4">
+							<label  id="label-pontal-moldado" for="quantidade4">PONTAL MOLDADO (P) =</label>
+							<input type="number" id="pontal-moldado" name="pontal-moldado" class="form-control" min="1" max="500" step="0.1" oninput="atualizarCalculos()" required> 
+						</div>
+						<div class="col-md-4">
+							<label  id="label-boca-moldada" for="quantidade5">BOCA MOLDADA (B) =</label>
+							<input type="number" id="boca-moldada" name="quantity" class="form-control" min="1" max="500" step="0.1" oninput="atualizarCalculos()" required> 
+						</div>
+						<div class="col-md-4">
+							<label for="quantidade6">CONTORNO (Co) =</label>
+							<input type="number" id="contorno" name="quantity" class="form-control" min="1" max="500" step="0.1" oninput="atualizarCalculos()"> 
+						</div>
+					</div>
+
+					<div class="row mt-3">
+						<div class="col-md-4">
+							<label for="quantidade7">COMPRIMENTO DE ARQUEAÇÃO =</label>
+							<input type="number" id="comprimento-arqueacao" name="quantity" class="form-control" min="1" max="500" step="0.1">
+							<br>
+						</div>
+
+						<div class="row mt-3">
+							<div class="col-md-4">
+								<label for="quantidade8">NÚMERO DE TRIPULANTES =</label>
+								<input type="number" id="numero-tripulantes" name="quantity" class="form-control" min="1" max="50"> 
+							</div>
+
+							<div class="col-md-4">
+								<label for="quantidade9">NÚM. DE PASS. EM CAMAROTES COM ATÉ 8 BELICHES(N1)</label>
+								<input type="number" id="numero-passageiros-beliches" name="quantity" class="form-control" min="1" max="50"> 
+							</div>
+
+							<div class="col-md-4">
+								<label for="quantidade10">NÚMERO DOS DEMAIS PASSAGEIROS (N2) =</label>
+								<input type="number" id="numero-demais-passageiros" name="quantity" class="form-control" min="1" max="50">
+							</div>
+						</div>
+
+						<div class="row mt-3">
+							<div class="col-md-4">
+								<label for="quantidade11">NÚMERO DE PROFISSIONAIS NÃO TRIPULANTES</label>
+								<a tabindex="0" role="button" class="btn btn-link p-0" data-bs-toggle="popover" data-bs-trigger="focus" data-bs-content="De acordo definição dos incisos 3.2.1 r) e 6.4.17 e artigo 7.4 da NORMAM-202/DPC, outras pessoas empregadas ou ocupadas, sob qualquer forma, a bordo da embarcação, em serviços que lhes digam respeito." data-bs-placement="top">
+									<small><strong>?</strong></small>
+								</a>
+								<input type="number" id="numeros-de-profissionais" name="quantity" class="form-control" min="1" max="50">
+							</div>
+						</div>
+						<div class="mt-4">
+							<button type="button" id="botaoproximo1" class="btn btn-primary" onclick="nextTab('passageiros-tab')" disabled>Próximo</button>
+						</div>
+					</div>
+				</form>
+			</div>
+
+
+			<!--Aqui começa o segundo Navbar --- IV - Determinação dos volumes -->
+			<div class="tab-pane fade" id="passageiros" role="tabpanel" aria-labelledby="passageiros-tab">
+				<div class="col-md-2">
+					<button type="button" class="btn btn-sm btn-warning" data-bs-toggle="popover" data-bs-placement="right" data-bs-trigger="focus" title="Instruções" data-bs-content=" aqui colocamos as intruções gerais">
+						Instruções Gerais
+					</button>
+				</div>
+				<br>
+				<div class="form-check">
+					<input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1" onclick="showSection('convencional')">
+					<label class="form-check-label" for="flexRadioDefault1">
+						MÉTODO EXPEDITO - CONVENCIONAL (TIPO BARCO MOTOR, BOTE, LANCHA, ETC...) - 
+					</label>
+				</div>
+				<div class="form-check">
+					<input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault2" onclick="showSection('volume-do-casco')" checked>
+					<label class="form-check-label" for="flexRadioDefault2">
+						VOLUME DO CASCO INFORMADO PELO PROJETISTA
+					</label>
+					<hr>
+				</div>
+
+				<!-- Seção Convencional (barco, motor, bote) -->
+				<div class="row" id="convencional-section">
+					<div class="form-group row mt-3">
+						<div class="col-md-2">
+							<label for="coeficiente-convencional">Coef =</label>
+							<input type="number" id="coeficiente-convencional" name="quantity" class="form-control" readonly>
+						</div>
+
+						<div class="col-md-2">
+							<label for="M-convencional">M =</label> 
+							<div class="input-group">
+								<input type="number" id="M-convencional" name="quantity" class="form-control">
+								<span class="input-group-text">m²</span>
+							</div>
+						</div>
+
+						<div class="col-md-2">
+							<label for="f-convencional">f =</label>
+							<input type="number" id="f-convencional" name="quantity" class="form-control" readonly>
+						</div>
+
+						<div class="col-md-2">
+							<label for="convencional-volume-do-casco">VOLUME DO CASCO =</label>
+							<div class="input-group">
+								<input type="number" id="convencional-volume-do-casco" name="quantity" class="form-control">
+								<span class="input-group-text">m³</span>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<!-- Seção Volume do Casco informado pelo projetista-->
+				<div class="row" id="volume-do-casco-section" style="display:none;">
+					<div class="col-md-2">
+						<label for="quantidade16">f =</label>
+						<input type="number" id="f-volume-do-casco" name="quantity" class="form-control" readonly>
+					</div>
+					<div class="col-md-2">
+						<label for="quantidade8">Volume do Casco M³=</label>
+						<input type="number" id="m-volume-do-casco" name="quantity" class="form-control">
+						<br>
+					</div>
+
+					<!-- forms group para escolher os tipos de balsas e flutuantes -->
+					<div class="form-group">
+						<label for="tipo-casco-select">Selecione uma opção para Volume do Casco Informado pelo Projetista</label>
+						<select class="form-control" id="tipo-casco-select" onchange="showContainer()">
+							<option value="">Selecione o tipo</option>
+							<option value="balsa-tipoI">BALSA (TIPO I)</option>
+							<option value="balsa-tipoII">BALSA (TIPO II)</option>
+							<option value="flutuante-tipoI">FLUTUANTE (TIPO I)</option>
+							<option value="flutuante-tipoII">FLUTUANTE (TIPO II)</option>
+							<option value="flutuante-tipoIII">FLUTUANTE (TIPO III)</option>
+							<option value="catamara-tipoI">CATAMARÃ (TIPO I)</option>
+							<option value="catamara-tipoII">CATAMARÃ (TIPO II)</option>
+							<option value="trimara">TRIMARÃ</option>
+						</select>
+					</div>
+
+
+					<div id="balsa-tipoI-container" style="display: none;">
+						<div class="container">
+							<br>
+							<label for="balsa-tipoI">BALSA (TIPO I)</label>
+							<br>
+							<div class="row mt-3">
+								<!-- Coluna da imagem à esquerda -->
+								<div class="col-md-6 text-center">
+									<figure class="figure">
+										<img src="../img/balsatipoI.png" class="figure-img img-fluid rounded" alt="Imagem de um quadrado genérico com bordas arredondadas, em uma figure.">
+										<figcaption class="figure-caption">Uma legenda para a imagem acima.</figcaption>
+									</figure>
+								</div>
+
+								<!-- Coluna dos campos de texto à direita -->
+								<div class="col-md-2">
+									<button type="button" class="btn btn-sm btn-outline-secondary" data-bs-toggle="popover" data-bs-placement="right" data-bs-trigger="focus" title="Instruções" data-bs-content="INSTRUÇÕES ESPECÍFICAS:
+									1) ESTE PROCEDIMENTO SOMENTE PODE SER UTILIZADO QUANDO O MÉTODO EXPEDITO NÃO FOR APLICÁVEL; 
+									2) VOLUME DO CASCO PODE SER OBTIDO NAS NOTAS DE ARQUEAÇÃO, CURVAS HIDROSTÁTICAS OU QUALQUER OUTRO DOCUMENTO APRESENTADO">
+									Instruções de Preenchimento
+								</button>
+								<div class="mb-4">
+									<label for="parametros-adicionais">PARAMETROS ADICIONAIS A SEREM MEDIDOS:</label>
+								</div>
+								<div class="mb-2">
+									<label for="balsa-tipoI-a">a =</label> m
+									<input type="number" id="balsa-tipoI-a" name="quantity" class="form-control form-control-sm" min="1" max="50" step="0.1">
+								</div>
+								<div class="mb-2">
+									<label for="balsa-tipoI-b">b =</label> m
+									<input type="number" id="balsa-tipoI-b" name="quantity" class="form-control form-control-sm" min="1" max="50" step="0.1">
+								</div>
+								<div class="mb-2">
+									<label for="balsa-tipoI-c">c =</label> m
+									<input type="number" id="balsa-tipoI-c" name="quantity" class="form-control form-control-sm" min="1" max="50" step="0.1">
+								</div>
+								<div class="mb-2">
+									<label for="balsa-tipoI-d">d =</label> m
+									<input type="number" id="balsa-tipoI-d" name="quantity" class="form-control form-control-sm" min="1" max="50" step="0.1">
+								</div>
+								<div class="mb-2">
+									<label for="balsa-tipoI-volume-casco">Volume do casco =</label> m³
+									<input type="text" id="balsa-tipoI-volume-casco" name="quantity" class="form-control form-control-sm" min="1" max="50">
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div id="balsa-tipoII-container" style="display: none;">
+					<div class="container">
+						<br>
+						<label for="quantidade7">BALSA (TIPO II)</label>
+						<br>
+						<div class="row mt-3">
+							<!-- Coluna da imagem à esquerda -->
+							<div class="col-md-6 text-center">
+								<figure class="figure">
+									<img src="../img/balsatipoII.png" class="figure-img img-fluid rounded" alt="Imagem de um quadrado genérico com bordas arredondadas, em uma figure.">
+									<figcaption class="figure-caption">Uma legenda para a imagem acima.</figcaption>
+								</figure>
+							</div>
+
+							<!-- Coluna dos campos de texto à direita -->
+							<div class="col-md-2">
+								<div class="mb-4">
+									<label for="parametros-adicionais2">PARAMETROS ADICIONAIS A SEREM MEDIDOS:</label>
+								</div>
+								<div class="mb-2">
+									<label for="balsa-tipoII-a">a =</label> m
+									<input type="number" id="balsa-tipoII-a" name="quantity" class="form-control form-control-sm" min="1" max="50" step="0.1">
+								</div>
+								<div class="mb-2">
+									<label for="balsa-tipoII-b">b =</label> m
+									<input type="number" id="balsa-tipoII-b" name="quantity" class="form-control form-control-sm" min="1" max="50" step="0.1">
+								</div>
+								<div class="mb-2">
+									<label for="balsa-tipoII-volume-casco">Volume do casco =</label> m³
+									<input type="text" id="balsa-tipoII-volume-casco" name="quantity" class="form-control form-control-sm" min="1" max="50">
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div id="flutuante-tipoI-container" style="display: none;">
+					<div class="container">
+						<br>
+						<label for="quantidade7">FLUTUANTE (TIPO I)</label>
+						<br>
+						<div class="row mt-3">
+							<!-- Coluna da imagem à esquerda -->
+							<div class="col-md-6 text-center">
+								<figure class="figure">
+									<img src="../img/flutuantetipoI.png" class="figure-img img-fluid rounded" alt="Imagem de um quadrado genérico com bordas arredondadas, em uma figure.">
+									<figcaption class="figure-caption">Uma legenda para a imagem acima.</figcaption>
+								</figure>
+							</div>
+
+							<!-- Coluna dos campos de texto à direita -->
+							<div class="col-md-2">
+								<div class="mb-4">
+									<label for="quantidade11">NÃO É NECESSÁRIA A MEDIÇÃO DE NENHUM PARÂMETRO ADICIONAL</label>
+								</div>
+								<div class="mb-2">
+									<label for="flutuante-tipoIII-volume-casco">Volume do casco =</label> m³
+									<input type="text" id="flutuante-tipoI-volume-casco" name="quantity" class="form-control form-control-sm" min="1" max="50">
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<!-- FLUTUANTE (TIPO II) -->
+				<div id="flutuante-tipoII-container" style="display: none;">
+					<div class="container">
+						<br>
+						<label for="flutuante-tipoII">FLUTUANTE (TIPO II)</label>
+						<br>
+						<div class="row mt-3">
+							<div class="col-md-6 text-center">
+								<figure class="figure">
+									<img src="../img/flutuantetipoII.png" class="figure-img img-fluid rounded" alt="Flutuante Tipo II">
+									<figcaption class="figure-caption">Descrição do flutuante tipo II.</figcaption>
+								</figure>
+							</div>
+
+							<div class="col-md-2">
+								<div class="mb-4">
+									<label for="parametros-adicionais">PARAMETROS ADICIONAIS A SEREM MEDIDOS:</label>
+								</div>
+								<div class="mb-2">
+									<label for="flutuante-tipoII-a">a =</label> m
+									<input type="number" id="flutuante-tipoII-a" name="quantity" class="form-control form-control-sm" min="1" max="50" step="0.1">
+								</div>
+								<div class="mb-2">
+									<label for="flutuante-tipoII-b">b =</label> m
+									<input type="number" id="flutuante-tipoII-b" name="quantity" class="form-control form-control-sm" min="1" max="50" step="0.1">
+								</div>
+								<div class="mb-2">
+									<label for="flutuante-tipoII-c">c =</label> m
+									<input type="number" id="flutuante-tipoII-c" name="quantity" class="form-control form-control-sm" min="1" max="50" step="0.1">
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<!-- FLUTUANTE (TIPO III) -->
+				<div id="flutuante-tipoIII-container" style="display: none;">
+					<div class="container">
+						<br>
+						<label for="flutuante-tipoIII">FLUTUANTE (TIPO III)</label>
+						<br>
+						<div class="row mt-3">
+							<div class="col-md-6 text-center">
+								<figure class="figure">
+									<img src="../img/flutuantetipoIII.png" class="figure-img img-fluid rounded" alt="Flutuante Tipo III">
+									<figcaption class="figure-caption">Descrição do flutuante tipo III.</figcaption>
+								</figure>
+							</div>
+
+							<div class="col-md-2">
+								<div class="mb-4">
+									<label for="parametros-adicionais">PARAMETROS ADICIONAIS A SEREM MEDIDOS:</label>
+								</div>
+								<div class="mb-2">
+									<label for="flutuante-tipoIII-a">a =</label> m
+									<input type="number" id="flutuante-tipoIII-a" name="quantity" class="form-control form-control-sm" min="1" max="50" step="0.1">
+								</div>
+								<div class="mb-2">
+									<label for="flutuante-tipoIII-b">b =</label> m
+									<input type="number" id="flutuante-tipoIII-b" name="quantity" class="form-control form-control-sm" min="1" max="50" step="0.1">
+								</div>
+								<div class="mb-2">
+									<label for="flutuante-tipoIII-c">c =</label> m
+									<input type="number" id="flutuante-tipoIII-c" name="quantity" class="form-control form-control-sm" min="1" max="50" step="0.1">
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<!-- CATAMARÃ (TIPO I) -->
+				<div id="catamara-tipoI-container" style="display: none;">
+					<div class="container">
+						<br>
+						<label for="catamara-tipoI">CATAMARÃ (TIPO I)</label>
+						<br>
+						<div class="row mt-3">
+							<div class="col-md-6 text-center">
+								<figure class="figure">
+									<img src="../img/catamaratipoI.png" class="figure-img img-fluid rounded" alt="Catamarã Tipo I">
+									<figcaption class="figure-caption">Descrição do catamarã tipo I.</figcaption>
+								</figure>
+							</div>
+
+							<div class="col-md-2">
+								<div class="mb-4">
+									<label for="parametros-adicionais">PARAMETROS ADICIONAIS A SEREM MEDIDOS:</label>
+								</div>
+								<div class="mb-2">
+									<label for="catamara-tipoI-a">a =</label> m
+									<input type="number" id="catamara-tipoI-a" name="quantity" class="form-control form-control-sm" min="1" max="50" step="0.1">
+								</div>
+								<div class="mb-2">
+									<label for="catamara-tipoI-b">b =</label> m
+									<input type="number" id="catamara-tipoI-b" name="quantity" class="form-control form-control-sm" min="1" max="50" step="0.1">
+								</div>
+								<div class="mb-2">
+									<label for="catamara-tipoI-c">c =</label> m
+									<input type="number" id="catamara-tipoI-c" name="quantity" class="form-control form-control-sm" min="1" max="50" step="0.1">
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<!-- CATAMARÃ (TIPO II) -->
+				<div id="catamara-tipoII-container" style="display: none;">
+					<div class="container">
+						<br>
+						<label for="catamara-tipoII">CATAMARÃ (TIPO II)</label>
+						<br>
+						<div class="row mt-3">
+							<div class="col-md-6 text-center">
+								<figure class="figure">
+									<img src="../img/catamaratipoII.png" class="figure-img img-fluid rounded" alt="Catamarã Tipo II">
+									<figcaption class="figure-caption">Descrição do catamarã tipo II.</figcaption>
+								</figure>
+							</div>
+
+							<div class="col-md-2">
+								<div class="mb-4">
+									<label for="parametros-adicionais">PARAMETROS ADICIONAIS A SEREM MEDIDOS:</label>
+								</div>
+								<div class="mb-2">
+									<label for="catamara-tipoII-a">a =</label> m
+									<input type="number" id="catamara-tipoII-a" name="quantity" class="form-control form-control-sm" min="1" max="50" step="0.1">
+								</div>
+								<div class="mb-2">
+									<label for="catamara-tipoII-b">b =</label> m
+									<input type="number" id="catamara-tipoII-b" name="quantity" class="form-control form-control-sm" min="1" max="50" step="0.1">
+								</div>
+								<div class="mb-2">
+									<label for="catamara-tipoII-c">c =</label> m
+									<input type="number" id="catamara-tipoII-c" name="quantity" class="form-control form-control-sm" min="1" max="50" step="0.1">
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<!-- TRIMARÃ -->
+				<div id="trimara-container" style="display: none;">
+					<div class="container">
+						<br>
+						<label for="trimara">TRIMARÃ</label>
+						<br>
+						<div class="row mt-3">
+							<div class="col-md-6 text-center">
+								<figure class="figure">
+									<img src="../img/trimara.png" class="figure-img img-fluid rounded" alt="Trimarã">
+									<figcaption class="figure-caption">Descrição do trimarã.</figcaption>
+								</figure>
+							</div>
+
+							<div class="col-md-2">
+								<div class="mb-4">
+									<label for="parametros-adicionais">PARAMETROS ADICIONAIS A SEREM MEDIDOS:</label>
+								</div>
+								<div class="mb-2">
+									<label for="trimara-a">a =</label> m
+									<input type="number" id="trimara-a" name="quantity" class="form-control form-control-sm" min="1" max="50" step="0.1">
+								</div>
+								<div class="mb-2">
+									<label for="trimara-b">b =</label> m
+									<input type="number" id="trimara-b" name="quantity" class="form-control form-control-sm" min="1" max="50" step="0.1">
+								</div>
+								<div class="mb-2">
+									<label for="trimara-c">c =</label> m
+									<input type="number" id="trimara-c" name="quantity" class="form-control form-control-sm" min="1" max="50" step="0.1">
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+			</div>
+			<div class="mt-4">
+				<button type="button" class="btn btn-secondary" id="botaoproximo2" onclick="nextTab('volumes-acima-tab')">Próximo</button>
+			</div>
+		</div>
+
+
+
+
+
+		<!--Aqui começa o terceiro Navbar - Volume Acima do Convés -->
+		<div class="tab-pane fade" id="volumes-acima" role="tabpanel" aria-labelledby="volumes-acima-tab">
+			<div class="d-flex align-items-center mb-3">
+				<label for="numero-linhas" id="label-numero-linhas" class="form-label me-2">Número de linhas (Máx 50):</label>
+				<input type="number" id="numero-linhas" min="1" max="50">
+				<button class="btn btn-success btn-sm btn-sm ms-3" onclick="criarLinhas()">Criar Linhas</button>
+				<button class="btn btn-danger btn-sm btn-sm ms-2" onclick="excluirCampos()">Excluir Linhas</button>
+
+				<div class="border border-3 px-2 py-1 ms-auto">
+					<strong>Total: </strong>
+					<div class="input-group">
+						<input type="number" id="total-volume" name="quantity" class="form-control">
+					</div>
+				</div>
+			</div>
+
+
+			<!-- Tabela de volumes -->
+			<table id="tabela-volumes">
+				<thead>
+					<tr>
+						<th>Nome</th>
+						<th>Comprimento (A)</th>
+						<th>Largura (B)</th>
+						<th>Altura (C)</th>
+						<th>Volume Estimado (Re)</th>
+						<th>Volume Informado (Ri)</th>
+						<th>Volume (Rf)</th>
+					</tr>
+				</thead>
+				<tbody>
+				</tbody>
+			</table>
+			<div class="mt-4">
+				<button type="button" class="btn btn-primary" id="botaoproximo3" onclick="nextTab('det-calados-tab')">Próximo</button>
+			</div>
+		</div>
+
+
+
+
+		<!-- Quarta Navbar - Determinação dos Calados -->
+		<div class="tab-pane fade" id="det-calados" role="tabpanel" aria-labelledby="det-calados-tab">
+			<label for="densidade-agua">Densidade da Água:</label>
+			<div class="form-check">
+				<input class="form-check-input" type="radio" name="densidade-agua" id="agua-doce" value="1.000">
+				<label class="form-check-label" id="label-agua-doce" for="agua-doce">Doce (1,000 t/m³)</label>
+			</div>
+			<div class="form-check">
+				<input class="form-check-input" type="radio" name="densidade-agua" id="agua-salgada" value="1.025">
+				<label class="form-check-label" id="label-agua-salgada" for="agua-salgada">Salgada (1,025 t/m³)</label>
+			</div>
+
+			<!-- Seção de deslocamento -->
+			<div class="row" id="determinacao-calados-section3">
+				<div class="col-md-4">
+					<label for="deslocamento-leve">CALADO LEVE</label>
+					<input type="number" id="calado-leve" name="leve" class="form-control" min="0" step="0.1" disabled>
+				</div>
+				<div class="col-md-4">
+					<label for="deslocamento-leve">CALADO CARREGADO</label>
+					<input type="number" id="calado-carregado" name="carregado" class="form-control" min="0" step="0.1" disabled>
+				</div>
+				<div class="col-md-4">
+					<label for="deslocamento-leve">DESLOCAMENTO LEVE</label>
+					<input type="number" id="deslocamento-leve" name="deslocamento-leve" class="form-control" min="0" step="0.1"  disabled>
+				</div>
+				<div class="col-md-4">
+					<label for="deslocamento-carregado">DESLOCAMENTO CARREGADO</label>
+					<input type="number" id="deslocamento-carregado" name="deslocamento-carregado" class="form-control" min="0" step="0.1" disabled>
+				</div>
+				<div class="col-md-4">
+					<label for="porte-bruto">PORTE BRUTO</label>
+					<input type="number" id="porte-bruto" name="porte-bruto" class="form-control" min="0" step="0.1" disabled>
+				</div>
+			</div>
+
+			<div class="d-flex align-items-center mb-3">
+				<!-- Botão de Voltar -->
+				<button type="button" class="btn btn-secondary ms-3" onclick="nextTab('volumes-acima-tab')">Voltar</button>
+				<!-- Botão de Próximo -->
+				<button type="button" class="btn btn-primary ms-3" id="botaoproximo4" onclick="nextTab('volumes-espacos-carga-tab')">Próximo</button>
+			</div>
+		</div>
+
+
+
+		<!-- Quinta Navbar - Volume dos Espaços de Carga -->
+		<div class="tab-pane fade" id="volumes-espacos-carga" role="tabpanel" aria-labelledby="volumes-espacos-carga-tab">
+			<div class="form-check">
+				<label for="transporte-carga" id="label-transporta-carga" class="form-check-label">A embarcação transporta carga?<span style="color: red;">*</span>'</label>
+				<div class="form-check">
+					<input class="form-check-input" type="radio" id="tranporta-carga-sim" name="tranporta-carga" value="sim">
+					<label class="form-check-label" for="tranporta-carga-sim">Sim</label>
+				</div>
+				<div class="form-check">
+					<input type="radio" class="form-check-input" id="tranporta-carga-nao" name="tranporta-carga" value="nao">
+					<label class="form-check-label" for="tranporta-carga-nao">Não</label>
+				</div>
+			</div>
+
+			<div class="form-check">
+				<label class="form-check-label">A embarcação transporta carga nos porões ou tanques abaixo do convés?</label>
+				<div class="form-check">
+					<input class="form-check-input" type="radio" id="tranporta-carga-abaixo-sim" name="tranporta-carga-abaixo" value="sim">
+					<label class="form-check-label" for="tranporta-carga-abaixo-sim">Sim</label>
+					<input type="number" class="form-control" id="input-carga-abaixo" value="0" placeholder="m³" style="display:none; width: 150px;" disabled>
+				</div>
+				<div class="form-check">
+					<input type="radio" class="form-check-input" id="tranporta-carga-abaixo-nao" name="tranporta-carga-abaixo" value="nao">
+					<label class="form-check-label" for="tranporta-carga-abaixo-nao">Não</label>
+				</div>
+			</div>
+
+			<div class="form-check">
+				<label class="form-check-label">A embarcação transporta carga em espaços fechados acima do convés principal?</label>
+				<div class="form-check">
+					<input class="form-check-input" type="radio" id="tranporta-carga-acima-sim" name="tranporta-carga-acima" value="sim">
+					<label class="form-check-label" for="tranporta-carga-acima-sim">Sim</label>
+					<input type="number" class="form-control" id="input-carga-acima" value="0" placeholder="m³" style="display:none; width: 150px;" disabled>
+				</div>
+				<div class="form-check">
+					<input type="radio" class="form-check-input" id="tranporta-carga-acima-nao" name="tranporta-carga-acima" value="nao">
+					<label class="form-check-label" for="tranporta-carga-acima-nao">Não</label>
+				</div>
+			</div>
+			<hr>
+			<div class="d-flex align-items-center mb-3">
+				<!-- Botão de Voltar -->
+				<button type="button" class="btn btn-secondary ms-3" onclick="nextTab('det-calados-tab')">Voltar</button>
+				<!-- Botão de Próximo -->
+				<button type="button" class="btn btn-primary ms-3" id="botaoproximo5" onclick="nextTab('dados-motores-tab')">Próximo</button>
+			</div>
+		</div>
+
+
+
+		<!-- Sexta Navbar - VIII - Dados dos Motores -->
+		<div class="tab-pane fade" id="dados-motores" role="tabpanel" aria-labelledby="dados-motores-tab">
+			<!-- Pergunta sobre inserção dos dados dos motores -->
+			<div class="form-check mb-4">
+				<label class="form-check-label" id="label-dados-do-motor">Os dados dos motores devem ser inseridos nas notas da arqueação?<span style="color: red;">*</span>';</label>
+				<div class="form-check">
+					<input type="radio" class="form-check-input" id="dados-motor-nota-sim" name="dados-motor-nota" value="sim">
+					<label class="form-check-label" for="dados-motor-nota-sim">Sim</label>
+				</div>
+				<div class="form-check">
+					<input type="radio" class="form-check-input" id="dados-motor-nota-nao" name="dados-motor-nota" value="nao">
+					<label class="form-check-label" for="dados-motor-nota-nao">Não</label>
+				</div>
+			</div>
+
+			<!-- Campo para definir número de linhas e botões -->
+			<div class="d-flex align-items-center mb-3">
+				<label for="numero-linhas-Motor" class="form-label me-2">Número de linhas (Máx 3):</label>
+				<input type="number" id="numero-linhas-Motor" class="form-control" style="width: 80px;" min="1" max="5">
+
+				<!-- Botões alinhados na mesma linha -->
+				<button class="btn btn-success btn-sm ms-3" onclick="criarLinhasMotor()">Criar Linhas</button>
+				<button class="btn btn-danger btn-sm ms-2" onclick="excluirCamposMotor()">Excluir Linhas</button>
+			</div>
+			<!-- Tabela dos dados dos motores -->
+			<div class="row">
+				<div class="col-md-12">
+					<table class="table table-hover" id="tabela-dados-motores">
+						<thead>
+							<tr>
+								<th>Fabricante</th>
+								<th>Modelo</th>
+								<th>Número de Série</th>
+								<th>Potência (kW)</th>
+								<th>RPM</th>
+								<th>Combustível</th>
+							</tr>
+						</thead>
+						<tbody>
+							<!-- Linhas serão inseridas aqui -->
+						</tbody>
+					</table>
+				</div>
+			</div>
+
+
+			<div class="d-flex align-items-center mb-3">
+				<!-- Botão de Voltar -->
+				<button type="button" class="btn btn-secondary ms-3" onclick="nextTab('volumes-espacos-carga-tab')">Voltar</button>
+				<!-- Botão de Próximo -->
+				<button type="button" class="btn btn-primary ms-3" id="botaoproximo6" onclick="nextTab('arqueacao-bruta-liquida-tab')">Próximo</button>
+			</div>
+		</div>
+
+
+
+		<!-- Sétima Navbar - Arqueação Bruta e Líquida -->
+		<div class="tab-pane fade" id="arqueacao-bruta-liquida" role="tabpanel" aria-labelledby="arqueacao-bruta-liquida-tab">
+			<label for="arq-bruta"><strong>Arqueação Bruta</strong></label>
+			<div class="form-group row mt-3">
+				<div class="col-md-4">
+					<label for="v1">V1 (Volume dos Espaços Fechados abaixo do Convés)</label>
+					<input type="number" id="v1" class="form-control">
+				</div>
+				<div class="col-md-4">
+					<label for="v2">V2 (Volume dos Espaços Fechados acima do Convés)</label>
+					<input type="number" id="v2" class="form-control">
+				</div>
+				<div class="col-md-4">
+					<label for="volume-total-arq-bruta">VOLUME TOTAL (V)</label>
+					<input type="number" id="volume-total-arq-bruta" class="form-control">
+				</div>
+			</div>
+			<div class="form-group row mt-3">
+				<div class="col-md-4">
+					<label for="k1">K1</label>
+					<input type="number" id="k1" class="form-control">
+				</div>
+
+				<div class="col-md-4">
+					<label for="arqueacao-bruta">Arqueação Bruta</label>
+					<input type="number" id="arqueacao-bruta" class="form-control">
+				</div>
+			</div>
+			<hr>
+			<label for="arq-bruta"><strong>Arqueação Líquida</strong></label>
+			<div class="form-group row mt-3">
+				<div class="col-md-4">
+					<label for="espacos-carga-arq-liq">Espaços de Carga (Vc)</label>
+					<input type="number" id="espacos-carga-arq-liq" class="form-control" disabled>
+				</div>
+				<div class="col-md-4">
+					<label for="k2">K2</label>
+					<input type="number" id="k2" value="0" class="form-control" disabled>
+				</div>
+				<div class="col-md-4">
+					<label for="N1+N2">N1+N2</label>
+					<input type="number" id="n1-n2" value="0" class="form-control" disabled>
+				</div>
+			</div>
+			<div class="form-group row mt-3">
+				<div class="col-md-4">
+					<label for="formula1-arq-liq">(4H/3P)²</label>
+					<input type="number" id="formula-arq-liq" class="form-control" disabled>
+				</div>
+				<div class="col-md-4">
+					<label for="formula2-arq-liq">K2 Vc (4H/3P)²</label>
+					<input type="number" id="formula2-arq-liq" class="form-control" disabled>
+				</div>
+				<div class="col-md-4">
+					<label for="formula3-arq-liq">AL=K2 VC (4H/3P)²+(1,25x(AB+ 10000)/10000)x(N1+(N2/10))</label>
+					<input type="number" id="formula3-arq-liq" class="form-control" disabled>
+				</div>
+			</div>
+			<div class="form-group row mt-3">
+				<div class="col-md-4">
+					<label for="formula4-arq-liq">30% da AB =</label>
+					<input type="number" id="formula4-arq-liq" class="form-control" disabled>
+				</div>
+				<div class="col-md-4">
+					<label for="arqueacao-liquida">Arqueação Líquida</label>
+					<input type="number" id="arqueacao-liquida" class="form-control" disabled>
+				</div>
+			</div>
+			<div class="d-flex align-items-center mb-3">
+				<!-- Botão de Voltar -->
+				<button type="button" class="btn btn-secondary ms-3" onclick="nextTab('caracteristicas-tab')">Voltar</button>
+				<!-- Botão de Próximo -->
+				<button type="button" class="btn btn-primary ms-3" id="botaoproximo7" onclick="nextTab('observacoes-tab')">Próximo</button>
+			</div>
+		</div>
+
+
+		<!-- Observações -->
+		<div class="tab-pane fade" id="observacoes" role="tabpanel" aria-labelledby="observacoes-tab">
+			<h5>Notas para Arqueação</h5>
+
+			<!-- Campo de Numerador das Notas para Arqueação -->
+			<div class="row">
+				<!-- Campo para OM (3 dígitos) -->
+				<div class="col-md-2">
+					<label for="omField">NARQ (OM - 3 dígitos)</label>
+					<input type="text" id="omField" name="omField" class="form-control" maxlength="3" placeholder="OM" required>
+				</div>
+
+				<!-- Campo para Sequencial (5 dígitos) -->
+				<div class="col-md-2">
+					<label for="sequencialField">Sequencial (5 dígitos)</label>
+					<input type="text" id="sequencialField" name="sequencialField" class="form-control" maxlength="5" placeholder="00000" required>
+				</div>
+
+				<!-- Campo para data automática -->
+				<div class="col-md-2">
+					<label for="dataField">Data</label>
+					<input type="text" id="dataField" name="dataField" class="form-control" readonly>
+				</div>
+
+				<!-- Campo para o ano automático -->
+				<div class="col-md-2">
+					<label for="anoField">Ano</label>
+					<input type="text" id="anoField" name="anoField" class="form-control" readonly>
+				</div> 
+
+				<!-- Campo para a hora automática -->
+				<div class="col-md-2">
+					<label for="horaField">Hora</label>
+					<input type="text" id="horaField" name="horaField" class="form-control" readonly>
+				</div>
+			</div>
+
+			<!-- Caixa de texto livre com valor predefinido -->
+			<div class="mt-3">
+				<label for="textoLivre">Texto Livre</label>
+				<textarea class="form-control" id="textoLivre" rows="3">INCLUIR INFORMAÇÕES DOS DOCUMENTOS ELABORADOS E SEU RESPONSÁVEL TÉCNICO, NOME ANTERIOR, QUAL AS NOTAS PARA ARQUEAÇÃO ANTERIOR, MOTIVO DA EMISSÃO DAS NOTAS, ETC. EXEMPLO: Notas atualizadas conforme as Notas para Arqueação nº 023NARQ00001/2022, emitida em 01/01/2022 pela Capitania Fluvial de Santarém. Foram apresentados o Cálculo de Arqueação, Memorial Descritivo, Declaração do Responsável Técnico e Plano de Arranjo Geral, Segurança, Capacidade e Luzes de Navegação, datados de 13/11/2023 e a respectiva Anotação de Responsabilidade Técnica nº PA20230123946, emitida em 13/11/2023, elaborados pelo engenheiro naval Almirante Tamandaré, CREA-PA nº 79910.</textarea>
+			</div>
+
+			<!-- Nova área - Responsável pelos Cálculos -->
+			<div class="mt-4">
+				<h5>Responsável pelos Cálculos</h5>
+				<div class="row">
+					<div class="col-md-4">
+						<label for="nomeResponsavel">Nome</label>
+						<input type="text" id="nomeResponsavel" name="nomeResponsavel" class="form-control" placeholder="Nome" required>
+					</div>
+					<div class="col-md-4">
+						<label for="postoResponsavel">Posto</label>
+						<input type="text" id="postoResponsavel" name="postoResponsavel" class="form-control" placeholder="Posto" required>
+					</div>
+					<div class="col-md-4">
+						<label for="funcaoResponsavel">Função</label>
+						<input type="text" id="funcaoResponsavel" name="funcaoResponsavel" class="form-control" placeholder="Função" required>
+					</div>
+				</div>
+			</div>
+			<br>
+			<div class="d-flex align-items-center mb-3">
+				<!-- Botão de Voltar -->
+				<button type="button" class="btn btn-secondary ms-3" id="btn-revisar-dados" onclick="nextTab('caracteristicas-tab')">Revisar Dados</button>
+				<!-- Botão de Próximo -->
+				<button type="button" class="btn btn-success ms-3" id="btn-gerar-pdf" onclick="gerarPDF()">Gerar PDF</button>
+
+				<button type="button" class="btn btn-info ms-3" id="nova-arqueacao">Nova Arqueação</button>
+			</div>
+		</div>
+	</div>
+	<script src="../public/js/bootstrap.bundle.js"></script>
+
+
+</body>
+</html>
